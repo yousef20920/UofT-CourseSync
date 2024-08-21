@@ -20,3 +20,31 @@
 - The website extracts the weight of each assignment and test from the syllabus.
 - Students can enter the scores they received on each assignment and test.
 - Based on the entered scores and the weight of each component, the website calculates the student’s current grade in the course.
+
+
+
+## How to use
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the dev server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+To build for production:
+
+```bash
+npm run build
+```
+
+## License
+
+MIT License
