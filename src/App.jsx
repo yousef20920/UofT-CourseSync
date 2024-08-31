@@ -1,71 +1,65 @@
 import { useState } from 'react';
-import { Container, Box } from '@chakra-ui/react';
+import { Container, Box, VStack, Spinner, Text } from '@chakra-ui/react';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
-import TextInput from './components/TextInput.jsx';
-import KeywordsModal from './components/KeywordsModal.jsx';
+import UploadSyllabus from './components/UploadSyllabus';
 
 const App = () => {
-  const [keywords, setKeywords] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [syllabusData, setSyllabusData] = useState(null);
+  const [error, setError] = useState(null);
 
-  const extractKeywords = async (text) => {
+  const extractSyllabusData = async (file) => {
+    console.log('Extracting syllabus data for file:', file);
     setLoading(true);
-    setIsOpen(true);
+    setError(null);
 
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'text-davinci-003',
-        prompt:
-          'Extract keywords from this text. Make the first letter of every word uppercase and separate with commas:\n\n' +
-          text +
-          '',
-        temperature: 0.5,
-        max_tokens: 60,
-        top_p: 1.0,
-        frequency_penalty: 0.8,
-        presence_penalty: 0.0,
-      }),
-    };
+    const formData = new FormData();
+    formData.append('syllabus', file);
 
     try {
-      const response = await fetch(
-        import.meta.env.VITE_OPENAI_API_URL,
-        options
-      );
+      const response = await fetch('http://127.0.0.1:5000/api/extract-syllabus', {
+        method: 'POST',
+        body: formData,
+      });
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error details:', errorText);
+        throw new Error('Failed to extract syllabus data');
+      }
+
       const json = await response.json();
-      console.log(json.choices[0].text.trim());
-      setKeywords(json.choices[0].text.trim());
-      setLoading(false);
+      console.log('Extracted Syllabus Data:', json);
+      setSyllabusData(json);
     } catch (error) {
-      console.error(error);
+      console.error('Error extracting syllabus data:', error);
+      setError('There was a problem extracting syllabus data. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
   return (
-    <Box bg='blue.600' color='white' height='100vh' paddingTop={130}>
-      <Container maxW='3xl' centerContent>
-        <Header />
-        <TextInput extractKeywords={extractKeywords} />
-        <Footer />
-      </Container>
-      <KeywordsModal
-        keywords={keywords}
-        loading={loading}
-        isOpen={isOpen}
-        closeModal={closeModal}
-      />
-    </Box>
+      <Box bg="rgb(21, 57, 107)" color="white" minH="100vh" py={10}>
+        <Container maxW="7xl" centerContent>
+          <Header />
+          <VStack spacing={10} align="center" mt={60}> {/* Increased mt for more space */}
+            <Text fontSize="4xl" fontWeight="bold" textAlign="center">
+              Find and manage your courses at UofT
+            </Text>
+            {error && (
+                <Box bg="red.500" color="white" p={4} borderRadius="md">
+                  {error}
+                </Box>
+            )}
+            <UploadSyllabus extractSyllabusData={extractSyllabusData} />
+          </VStack>
+          {loading && <Spinner size="xl" mt={5} />}
+          <Footer />
+        </Container>
+      </Box>
   );
 };
 
