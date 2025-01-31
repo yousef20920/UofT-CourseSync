@@ -1,5 +1,7 @@
 # UofT-CourseSync
 
+![Salary Prediction Chart](coursesync.png)
+
 ## Project Overview
 
 **UofT-CourseSync** is a website designed to assist students at the University of Toronto in managing their coursework. The platform serves multiple purposes:
