@@ -1,6 +1,7 @@
-import { Flex, HStack, Heading, Image, Button, Link, Divider, IconButton } from '@chakra-ui/react';
-import { AiOutlineSetting } from 'react-icons/ai'; // Import the settings icon
-import logo from '../assets/logo.png'; // Make sure the logo path is correct
+import { Flex, HStack, Heading, Image, Button, Divider, IconButton, Link } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom'; // Import React Router Link
+import { AiOutlineSetting } from 'react-icons/ai';
+import logo from '../assets/logo.png'; // Ensure the logo path is correct
 
 const Header = () => {
     return (
@@ -11,13 +12,12 @@ const Header = () => {
             width="100%"
             px={8}
             py={4}
-            bg="transparent" // Set to transparent to blend with the page
+            bg="transparent"
             color="white"
-            position="absolute" // Make the header fixed to the top
+            position="absolute"
             top={0}
-            zIndex={1000} // Ensure the header is always on top
+            zIndex={1000}
         >
-            {/* Centered Header Content */}
             <Flex
                 alignItems="center"
                 justifyContent="space-between"
@@ -26,8 +26,8 @@ const Header = () => {
             >
                 {/* Logo and Title */}
                 <HStack spacing={1}>
-                    <Link href="/" display="flex" alignItems="center"> {/* Wrap logo and title with Link */}
-                        <Image src={logo} alt="logo" boxSize={10} /> {/* Adjusted size */}
+                    <Link as={RouterLink} to="/" display="flex" alignItems="center">
+                        <Image src={logo} alt="logo" boxSize={10} />
                         <Heading fontSize="2xl" fontWeight="extrabold" ml={2}>
                             UofT CourseSync
                         </Heading>
@@ -36,29 +36,60 @@ const Header = () => {
 
                 {/* Navigation Links */}
                 <HStack spacing={7}>
-                    <Link href="#" fontSize="lg" fontWeight="medium" _hover={{ color: 'blue.400' }}>
+                    <Link
+                        href="#"
+                        fontSize="lg"
+                        fontWeight="medium"
+                        _hover={{ color: 'blue.400' }}
+                    >
                         Courses
                     </Link>
-                    <Link href="#" fontSize="lg" fontWeight="medium" _hover={{ color: 'blue.400' }}>
+                    <Link
+                        href="#"
+                        fontSize="lg"
+                        fontWeight="medium"
+                        _hover={{ color: 'blue.400' }}
+                    >
                         Assignments
                     </Link>
-                    <Link href="#" fontSize="lg" fontWeight="medium" _hover={{ color: 'red.500' }}>
+                    <Link
+                        href="#"
+                        fontSize="lg"
+                        fontWeight="medium"
+                        _hover={{ color: 'red.500' }}
+                    >
                         Tests
                     </Link>
-                    <Link href="#" fontSize="lg" fontWeight="medium" _hover={{ color: 'green.500' }}>
+                    <Link
+                        href="#"
+                        fontSize="lg"
+                        fontWeight="medium"
+                        _hover={{ color: 'green.500' }}
+                    >
                         Grade Calculation
                     </Link>
-                    <Link href="#" fontSize="lg" fontWeight="medium" _hover={{ color: 'blue.100' }}>
+                    <Link
+                        href="#"
+                        fontSize="lg"
+                        fontWeight="medium"
+                        _hover={{ color: 'blue.100' }}
+                    >
                         Compare
                     </Link>
                 </HStack>
 
-                {/* Action Buttons, Divider, and Settings Icon */}
+                {/* Action Buttons */}
                 <HStack spacing={4}>
                     <Button variant="link" color="white" fontSize="md" fontWeight="medium">
                         Log In
                     </Button>
-                    <Button colorScheme="blue" size="md" variant="solid">
+                    <Button
+                        as={RouterLink} // Use Chakra's `as` prop to enable routing
+                        to="/signup" // Navigate to the Sign Up page
+                        colorScheme="blue"
+                        size="md"
+                        variant="solid"
+                    >
                         Sign Up
                     </Button>
                     <Divider orientation="vertical" borderColor="whiteAlpha.500" height="24px" />

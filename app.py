@@ -4,12 +4,22 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import pdfplumber
+import mysql.connector
 
 # Load environment variables from .env file
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+# MySQL Database Configuration
+db_config = {
+    'host': 'localhost',  # Replace with your MySQL host
+    'user': 'root',       # Replace with your MySQL username
+    'password': 'UOFT@2026',  # Replace with your MySQL password
+    'database': 'uoft_coursesync',  # Replace with your database name
+}
+
 
 # Initialize OpenAI client with the correct API key
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
@@ -66,6 +76,40 @@ def extract_syllabus():
 
     except Exception as e:
         print("Error details:", str(e))
+        return jsonify({"error": str(e)}), 500
+
+# Example route to fetch all users
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    try:
+        cursor = mysql.connection.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
+        cursor.close()
+        return jsonify(users)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/add-user', methods=['POST'])
+def add_user():
+    data = request.json
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not name or not email or not password:
+        return jsonify({"error": "All fields are required"}), 400
+
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        query = "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)"
+        cursor.execute(query, (name, email, password))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"message": "User added successfully!"}), 201
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
